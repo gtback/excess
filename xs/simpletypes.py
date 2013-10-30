@@ -1,3 +1,4 @@
+from .compat import str
 from .core import _DataType
 
 
@@ -40,4 +41,4 @@ class Boolean(_SimpleType):
 class String(_SimpleType):
     """A class used to represent xs:string values."""
 
-    _pytype = unicode
+    _pytype = str # Unicode string
