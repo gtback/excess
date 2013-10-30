@@ -7,10 +7,19 @@ be used outside the xs library.
 
 
 class _DataType(object):
+    """Base class for both simple and complex types."""
 
-    def can_contain(self, value):
-        """Test whether `value` is valid for this type"""
-        raise NotImplementedError
+    @classmethod
+    def check_value(cls, value):
+        """Test whether `value` is valid for this type.
+
+        This function should either convert `value` to a suitable value or
+        raise a ValueError.
+        """
+        if not isinstance(value, cls):
+            msg = "%s (type: %s) is not a %s" % (value, type(value), cls)
+            raise ValueError(msg)
+        return value
 
 
 class _Component(object):

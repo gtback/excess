@@ -44,16 +44,9 @@ class Element(_Component):
         return instance._fields.get(self.name, self.default)
 
     def __set__(self, instance, value):
-        if ((value is not None) and (not self.type_.can_contain(value))):
-            if self.multiple and isinstance(value, list):
-                # TODO: if a list, check if each item in the list is the
-                # correct type.
-                pass
-            elif self.type_._try_cast:
-                value = self.type_(value)
-            else:
-                raise ValueError("%s must be a %s, not a %s" %
-                                    (self.name, self.type_, type(value)))
+        #TODO: support lists.
+        if value is not None:
+            value = self.type_.check_value(value)
         instance._fields[self.name] = value
 
         #TODO: implement callback hooks
@@ -82,10 +75,7 @@ class Element(_Component):
 
     @value.setter
     def value(self, value):
-        if not self.type_.can_contain(value):
-            raise ValueError("Invalid type")
-
-        self._value = value
+        self._value = self.type_.check_value(value)
 
     def to_etree(self):
         root = etree.Element(self.name)
