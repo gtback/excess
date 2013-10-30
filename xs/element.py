@@ -6,16 +6,32 @@ from .simpletypes import _SimpleType
 class Element(_Component):
     """Python representation of an xs:element.
 
-    Elements can be constructed and used as data descriptors on ComplexType
-    classes.
+    This class can be used in several ways:
+    - By creating an instance.  The resulting object is a pseudo-type, and can
+      be used as factory to create duplicate Elements with the same name and
+      type.  These objects store their value (whose type must match the type
+      of the element) in the .value property.
+    - By declaring a data descriptor on a ComplexType class.  In this case the
+      actual `Element` object is attached to the class, not instances of the
+      class, but each instance stores its own value for each element.
     """
 
-    def __init__(self, name, type_):
+    def __init__(self, name, type_, value=None):
+        """Create a new Element.
+
+        If `value` is not `None`, it must be of type `type_`.
+        """
         super(Element, self).__init__(name, type_)
+        if value is not None:
+            self.value = value
         #TODO: add other xs:element-specific properties
 
     def __call__(self, value):
-        return SimpleElement(self.name, self.type_, value)
+        """Pseudo-factory to create instances of this type of element.
+
+        `value` must be of the correct type.
+        """
+        return Element(self.name, self.type_, value=value)
 
     def __get__(self, instance, owner):
         # If calling on a class rather than an instance of that class, return
@@ -59,13 +75,7 @@ class Element(_Component):
         else:
             return None
 
-
-class SimpleElement(_Component):
-
-    def __init__(self, name, type_, value):
-        super(SimpleElement, self).__init__(name, type_)
-        self.value = value
-
+    # For Element instances (as opposed to descriptors on ComplexType classes)
     @property
     def value(self):
         return self._value
