@@ -2,7 +2,7 @@ import xs
 
 
 def test_create_simple_elements():
-    name = xs.Element("lastname", xs.String, "Refnes")
+    name = xs.Element("lastname", xs.String, value="Refnes")
     assert name.value == "Refnes"
     assert name.to_xml() == b"<lastname>Refnes</lastname>"
 

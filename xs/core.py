@@ -29,6 +29,47 @@ class _Component(object):
     Schema.
     """
 
-    def __init__(self, name, type_):
+    def __init__(self, name, type_, default=None):
         self.name = name
         self.type_ = type_
+        self.default = default
+
+    def __get__(self, instance, owner):
+        # If calling on a class rather than an instance of that class, return
+        # the Element itself, rather than the instance's value for the Element.
+        if instance is None:
+            return self
+
+        # If this instance has been given a value, return that value.
+        # Otherwise, return the element's default value.
+        return instance._fields.get(self.name, self.default)
+
+    def __set__(self, instance, value):
+        #TODO: support lists.
+        if value is not None:
+            value = self.type_.check_value(value)
+        instance._fields[self.name] = value
+
+        #TODO: implement callback hooks
+
+    @property
+    def default(self):
+        """Return the default value of this element.
+
+        If minOccurs is 0, this will be either None or [], depending on whether
+        maxOccurs is >1 or not.
+        """
+        if self._default is not None:
+            return self._default
+        elif self.multiple:
+            return []
+        else:
+            return None
+
+    @default.setter
+    def default(self, value):
+        self._default = value
+
+    @property
+    def multiple(self):
+        raise NotImplementedError

@@ -1,4 +1,5 @@
 from .compat import etree
+from .complextype import ComplexType
 from .core import _Component
 from .simpletypes import _SimpleType
 
@@ -16,12 +17,12 @@ class Element(_Component):
       class, but each instance stores its own value for each element.
     """
 
-    def __init__(self, name, type_, value=None):
+    def __init__(self, name, type_, default=None, value=None):
         """Create a new Element.
 
         If `value` is not `None`, it must be of type `type_`.
         """
-        super(Element, self).__init__(name, type_)
+        super(Element, self).__init__(name, type_, default=default)
         if value is not None:
             self.value = value
         #TODO: add other xs:element-specific properties
@@ -33,40 +34,10 @@ class Element(_Component):
         """
         return Element(self.name, self.type_, value=value)
 
-    def __get__(self, instance, owner):
-        # If calling on a class rather than an instance of that class, return
-        # the Element itself, rather than the instance's value for the Element.
-        if instance is None:
-            return self
-
-        # If this instance has been given a value, return that value.
-        # Otherwise, return the element's default value.
-        return instance._fields.get(self.name, self.default)
-
-    def __set__(self, instance, value):
-        #TODO: support lists.
-        if value is not None:
-            value = self.type_.check_value(value)
-        instance._fields[self.name] = value
-
-        #TODO: implement callback hooks
-
     @property
     def multiple(self):
         #TODO: support maxOccurs>1
         return False
-
-    @property
-    def default(self):
-        """Return the default value of this element.
-
-        If minOccurs is 0, this will be either None or [], depending on whether
-        maxOccurs is >1 or not.
-        """
-        if self.multiple:
-            return []
-        else:
-            return None
 
     # For Element instances (as opposed to descriptors on ComplexType classes)
     @property
