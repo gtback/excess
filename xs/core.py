@@ -34,24 +34,6 @@ class _Component(object):
         self.type_ = type_
         self.default = default
 
-    def __get__(self, instance, owner):
-        # If calling on a class rather than an instance of that class, return
-        # the Element itself, rather than the instance's value for the Element.
-        if instance is None:
-            return self
-
-        # If this instance has been given a value, return that value.
-        # Otherwise, return the element's default value.
-        return instance._fields.get(self.name, self.default)
-
-    def __set__(self, instance, value):
-        #TODO: support lists.
-        if value is not None:
-            value = self.type_.check_value(value)
-        instance._fields[self.name] = value
-
-        #TODO: implement callback hooks
-
     @property
     def default(self):
         """Return the default value of this element.

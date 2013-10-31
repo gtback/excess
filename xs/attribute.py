@@ -5,7 +5,8 @@ from .simpletypes import _SimpleType
 class Attribute(_Component):
     """Python representation of an xs:attribute.
 
-    This class should be used as a date descriptor on a ComplexType class.
+    This class should be used to populate the "attributes" field in a
+    ComplexType class.
     """
 
     def __init__(self, name, type_, default=None):
