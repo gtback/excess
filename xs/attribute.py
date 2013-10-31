@@ -15,7 +15,7 @@ class Attribute(_Component):
         """
         if not issubclass(type_, _SimpleType):
             raise TypeError("The type of an Attribute must be a SimpleType")
-        super(Element, self).__init__(name, type_, default=default)
+        super(Attribute, self).__init__(name, type_, default=default)
         #TODO: add other xs:attribute-specific properties
 
     @property
