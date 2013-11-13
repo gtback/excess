@@ -77,8 +77,11 @@ class ComplexType(_DataType):
             cls.__components = components
         return cls.__components
 
-    def to_etree(self):
-        root = etree.Element(self.__class__.__name__)
+    def to_etree(self, name=None):
+        if not name:
+            name = self.__class__.__name__
+
+        root = etree.Element(name)
 
         for attr in self.attributes:
             value = getattr(self, attr.name)

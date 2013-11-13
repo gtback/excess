@@ -13,15 +13,11 @@ class SequenceType(xs.ComplexType):
     )
 
 
-#def test_ComplexType():
-#    class PersonInfo(xs.ComplexType):
-#        alive = xs.Element("alive", xs.Boolean)
-#
-#    p = PersonInfo()
-#    p.alive = True
-#
-#    assert isinstance(PersonInfo.alive, xs.Element)
-#    assert isinstance(p.alive, bool)
+class PersonInfo(xs.ComplexType):
+    content = xs.Sequence(
+        xs.Element("firstname", xs.String),
+        xs.Element("lastname", xs.String)
+    )
 
 
 def test_attribute_only_type():
@@ -48,3 +44,24 @@ def test_complex_type_elements():
 
     obj.foo = "bar"
     assert obj.to_xml() == b'<SequenceType><foo>bar</foo></SequenceType>'
+
+
+def test_top_level_element_with_complex_type():
+    p = xs.TopLevelElement("employee", PersonInfo)
+
+    assert p.name == "employee"
+    assert p.type_ == PersonInfo
+    assert p.value == None
+
+    p.firstname = "John"
+    p.lastname = "Smith"
+
+    xmlstr = b"""
+    <employee>
+        <firstname>John</firstname>
+        <lastname>Smith</lastname>
+    </employee>
+    """
+
+    assert p.to_xml() == b"".join(xmlstr.split())
+
