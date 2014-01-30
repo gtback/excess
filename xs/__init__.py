@@ -1,3 +1,10 @@
+'''
+Base module for the `xs` package.
+
+Types should be imported from here, as the other files might be reorganized in
+the future.
+'''
+
 from .simpletypes import Boolean, String
 from .attribute import Attribute
 from .complextype import ComplexType

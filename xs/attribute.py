@@ -1,3 +1,10 @@
+"""
+xs.attribute
+------------
+
+Implementation of xs:attribute
+"""
+
 from .core import _Component
 from .simpletypes import _SimpleType
 

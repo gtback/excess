@@ -1,4 +1,7 @@
-"""Foundational types for the `xs` library
+"""
+xs.core
+-------
+Foundational types for the `xs` library
 
 These do not correspond to actual types in the XML Schema Definition language,
 but are rather used to encapsulate common functionality.  These should not

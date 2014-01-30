@@ -1,5 +1,11 @@
+"""
+xs.element
+------------
+
+Implementation of xs:element
+"""
+
 from .compat import etree
-from .complextype import ComplexType
 from .core import _Component
 from .simpletypes import _SimpleType
 
@@ -35,6 +41,7 @@ class Element(_Component):
         return False
 
     def to_etree(self, value):
+        """Return an ElementTree with the contents of this Element"""
         root = etree.Element(self.name)
 
         if issubclass(self.type_, _SimpleType):
@@ -60,10 +67,18 @@ class TopLevelElement(Element):
 
     @property
     def value(self):
+        """
+        The value contained in this TopLevelElement.
+        """
         return self._value
 
     @value.setter
     def value(self, value):
+        """
+        Set the value of this TopLevelElement.
+
+        `value` must be either None or the proper type for this Element
+        """
         if value is None:
             self._value = None
         else:
