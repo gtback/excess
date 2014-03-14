@@ -1,3 +1,5 @@
+from datetime import date
+
 from .compat import str
 from .core import _DataType
 
@@ -38,7 +40,23 @@ class Boolean(_SimpleType):
             return 'false'
 
 
+class Date(_SimpleType):
+    """A class used to represent xs:date values."""
+
+    _pytype = date
+
+    @staticmethod
+    def from_xml(value):
+        #TODO: should we be be a bit more flexible here?
+
+        return date(*[int(x) for x in value.split('-')])
+
+    @staticmethod
+    def to_xml(value):
+        return value.isoformat()
+
+
 class String(_SimpleType):
     """A class used to represent xs:string values."""
 
-    _pytype = str # Unicode string
+    _pytype = str  # Unicode string
