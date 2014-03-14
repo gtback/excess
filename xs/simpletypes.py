@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 
 from .compat import etree, str
 from .core import _DataType
@@ -13,7 +14,7 @@ class _SimpleType(_DataType):
 
     @staticmethod
     def to_xml(value):
-        return value
+        return str(value)
 
     @classmethod
     def to_etree(cls, name, value):
@@ -61,8 +62,28 @@ class Date(_SimpleType):
     def to_xml(value):
         return value.isoformat()
 
+    @classmethod
+    def check_value(cls, value):
+        if isinstance(value, date):
+            return value
+        raise ValueError("Invalid value for Date object: %s (type %s)" %
+                         (value, type(value)))
+
+
+class Decimal(_SimpleType):
+    """A class used to represent xs:decimal values."""
+
+    _pytype = Decimal
+
 
 class String(_SimpleType):
     """A class used to represent xs:string values."""
 
     _pytype = str  # Unicode string
+
+
+class NMTOKEN(String):
+    """A class used to represent xs:NMTOKEN values."""
+
+    #TODO: actually restrict to not including whitespace
+    pass
