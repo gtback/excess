@@ -1,6 +1,6 @@
 from datetime import date
 
-from .compat import str
+from .compat import etree, str
 from .core import _DataType
 
 
@@ -14,6 +14,12 @@ class _SimpleType(_DataType):
     @staticmethod
     def to_xml(value):
         return value
+
+    @classmethod
+    def to_etree(cls, name, value):
+        root = etree.Element(name)
+        root.text = cls.to_xml(value)
+        return root
 
     @classmethod
     def check_value(cls, value):

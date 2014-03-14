@@ -26,8 +26,14 @@ class Sequence(object):
             self.components.append(arg)
             self.component_dict[arg.name] = arg
 
-    def to_etree(self, parent, obj):
+    def append_to_etree(self, parent, obj):
         """Populate components from this sequence into the ETree node"""
 
         for component in self.components:
-            parent.append(component.to_etree(getattr(obj, component.name)))
+            name = component.name
+            value = getattr(obj, name)
+
+            if value is None:
+                continue
+
+            parent.append(component.type_.to_etree(name, value))

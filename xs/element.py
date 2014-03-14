@@ -43,17 +43,6 @@ class Element(UnicodeMixin, _Component):
         #TODO: support maxOccurs>1
         return False
 
-    def to_etree(self, value):
-        """Return an ElementTree with the contents of this Element"""
-        root = etree.Element(self.name)
-
-        if issubclass(self.type_, _SimpleType):
-            root.text = self.type_.to_xml(value)
-        else:
-            root.append(self.type_.to_etree(value))
-
-        return root
-
 
 class TopLevelElement(Element):
     """An Element which is not part of a ComplexType"""
@@ -110,14 +99,7 @@ class TopLevelElement(Element):
         if self.value is None:
             raise ValueError("Element has not been given a value")
 
-        if issubclass(self.type_, _SimpleType):
-            root = etree.Element(self.name)
-            root.text = self.type_.to_xml(self.value)
-        else:
-            root = self.type_.to_etree(self.value, name=self.name)
-
-        return root
+        return self.type_.to_etree(self.name, self.value)
 
     def to_xml(self):
         return etree.tostring(self.to_etree())
-

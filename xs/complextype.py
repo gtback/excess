@@ -77,21 +77,28 @@ class ComplexType(_DataType):
             cls.__components = components
         return cls.__components
 
-    def to_etree(self, name=None):
-        if not name:
-            name = self.__class__.__name__
+    @classmethod
+    def to_etree(cls, name, value):
+        if not isinstance(value, cls):
+            msg = "{0} should be a {1} instance.".format(value, cls.__name__)
+            raise ValueError(msg)
 
         root = etree.Element(name)
 
-        for attr in self.attributes:
-            value = getattr(self, attr.name)
-            if value:
-                root.set(attr.name, value)
+        for attribute in value.attributes:
+            attribute_value = getattr(value, attribute.name)
+            if attribute_value:
+                # Attibutes must have simple types
+                root.set(attribute.name,
+                         attribute.type_.to_xml(attribute_value))
 
-        if self.content:
-            self.content.to_etree(root, self)
+        if cls.content:
+            cls.content.append_to_etree(root, value)
 
         return root
 
     def to_xml(self):
-        return etree.tostring(self.to_etree())
+        cls = self.__class__
+        name = cls.__name__
+        value = self
+        return etree.tostring(cls.to_etree(name, value))
