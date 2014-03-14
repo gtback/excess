@@ -25,5 +25,18 @@ elif is_py3:
     bytes = bytes
     basestring = (str, bytes)
 
+
+class UnicodeMixin(object):
+    """Let __str__ and __unicode functions work as expected on Python 2 and 3.
+
+    This code was adapted from:
+        http://lucumr.pocoo.org/2011/1/22/forwards-compatible-python/
+    """
+    if is_py3:
+        __str__ = lambda x: x.__unicode__()
+    else:
+        __str__ = lambda x: unicode(x).encode('utf-8')
+
+
 #TODO: test using lxml etree.
 import xml.etree.cElementTree as etree

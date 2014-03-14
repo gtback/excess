@@ -3,6 +3,11 @@ import pytest
 import xs
 
 
+def test_element_str():
+    element = xs.Element("lastname", xs.String)
+    assert str(element) == "lastname (String)"
+
+
 def test_create_top_level_element():
     name = xs.TopLevelElement("lastname", xs.String, value="Refnes")
     assert name.value == "Refnes"

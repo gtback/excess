@@ -5,12 +5,12 @@ xs.element
 Implementation of xs:element
 """
 
-from .compat import etree
+from .compat import etree, UnicodeMixin
 from .core import _Component
 from .simpletypes import _SimpleType
 
 
-class Element(_Component):
+class Element(UnicodeMixin, _Component):
     """Python representation of an xs:element.
 
     This should be used when defining the content of a `ComplexType` (as part
@@ -34,6 +34,9 @@ class Element(_Component):
         `value` must be of the correct type.
         """
         return TopLevelElement(self.name, self.type_, value=value)
+
+    def __unicode__(self):
+        return "{0.name} ({0.type_.__name__})".format(self)
 
     @property
     def multiple(self):
