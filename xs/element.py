@@ -28,10 +28,10 @@ class Element(UnicodeMixin, _Component):
         super(Element, self).__init__(name, type_, default=default)
         #TODO: add other xs:element-specific properties
 
-    def __call__(self, value):
+    def __call__(self, value=None):
         """Pseudo-factory to create instances of this type of element.
 
-        `value` must be of the correct type.
+        If defined, `value` must be of the correct type.
         """
         return TopLevelElement(self.name, self.type_, value=value)
 

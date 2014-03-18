@@ -30,3 +30,4 @@ class PurchaseOrderType(xs.ComplexType):
         xs.Attribute("orderDate", xs.Date)
     ]
 
+PurchaseOrder = xs.TopLevelElement("purchaseOrder", PurchaseOrderType)
