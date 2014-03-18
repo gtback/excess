@@ -6,7 +6,7 @@ import re
 from .po import PurchaseOrder, USAddress
 
 # The full example, the target for implementation
-COMPLETE = """
+COMPLETE = b"""
 <?xml version="1.0"?>
 <purchaseOrder orderDate="1999-10-20">
    <shipTo country="US">
@@ -42,7 +42,7 @@ COMPLETE = """
 """
 
 # The output as currently supported.
-SUPPORTED = """
+SUPPORTED = b"""
 <purchaseOrder orderDate="1999-10-20">
    <shipTo>
       <name>Alice Smith</name>
@@ -61,7 +61,7 @@ SUPPORTED = """
 </purchaseOrder>
 """
 
-UGLIFIED = re.sub(">\s+<", "><", SUPPORTED).strip()
+UGLIFIED = re.sub(b">\s+<", b"><", SUPPORTED).strip()
 
 
 def test_building_purchase_order():
@@ -84,6 +84,6 @@ def test_building_purchase_order():
 
     p.shipTo = shipTo
     p.billTo = billTo
-    print UGLIFIED
-    print p.to_xml()
+    print(UGLIFIED)
+    print(p.to_xml())
     assert UGLIFIED == p.to_xml()
