@@ -5,7 +5,8 @@ Types should be imported from here, as the other files might be reorganized in
 the future.
 '''
 
-from .simpletypes import Boolean, Date, Decimal, NMTOKEN, String
+from .simpletypes import (Boolean, Date, Decimal, Integer, NMTOKEN,
+        PositiveInteger, String)
 from .attribute import Attribute
 from .complextype import ComplexType
 from .content import Sequence

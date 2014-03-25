@@ -70,6 +70,23 @@ class Date(_SimpleType):
                          (value, type(value)))
 
 
+class Integer(_SimpleType):
+    """A class used to represent xs:integer values."""
+
+    _pytype = int
+
+
+class PositiveInteger(Integer):
+    """A class used to represent xs:positiveInteger values."""
+
+    @classmethod
+    def check_value(cls, value):
+        value = super(PositiveInteger, cls).check_value(value)
+        if value <= 0:
+            raise ValueError("%s is not positive" % value)
+        return value
+
+
 class Decimal(_SimpleType):
     """A class used to represent xs:decimal values."""
 

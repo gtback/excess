@@ -2,8 +2,8 @@ from datetime import date
 
 import pytest
 
-from xs import Boolean, Date
-
+from xs import Boolean, Date, Integer, PositiveInteger, TopLevelElement
+from xs.test import assert_valid, assert_invalid, assert_converts
 
 def test_Boolean_from_xml():
     assert Boolean.from_xml("0") == False
@@ -15,6 +15,29 @@ def test_Boolean_from_xml():
 def test_Boolean_to_xml():
     assert Boolean.to_xml(True) == "true"
     assert Boolean.to_xml(False) == "false"
+
+
+def test_valid_Integer():
+    for value in [1, 0, 100, -5]:
+        assert_valid(Integer, value)
+
+    assert_converts(Integer, "1", 1)
+
+
+def test_invalid_Integer():
+    #TODO: What should we do about 1.5? Python's int() will silently convert
+    # to 1.
+    for value in ["a"]:
+        assert_invalid(Integer, value)
+
+
+def test_valid_PositiveInteger():
+    assert_valid(PositiveInteger, 1)
+
+
+def test_invalid_PositiveInteger():
+    for value in [0, -1]:
+        assert_invalid(PositiveInteger, value)
 
 
 DATE_PAIRS = [
