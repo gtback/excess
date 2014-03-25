@@ -11,6 +11,9 @@ from .attribute import Attribute
 from .complextype import ComplexType
 from .content import Sequence
 from .element import Element, TopLevelElement
+from .restriction import Restriction
+
+UNBOUNDED = 'unbounded'
 
 
 __version__ = "0.1"
