@@ -11,6 +11,8 @@ from .compat import etree, UnicodeMixin
 from .core import _Component, _DataType
 from .simpletypes import _SimpleType
 
+UNBOUNDED = 'unbounded'
+
 
 class _InnerList(MutableSequence):
     """Used to maintain a "typed" list.
@@ -20,12 +22,19 @@ class _InnerList(MutableSequence):
     """
     _contained_type = object
 
-    def __init__(self, type_=None):
+    def __init__(self, type_=None, max_len=UNBOUNDED):
         if not issubclass(type_, _DataType):
             raise TypeError("'%s' is not a valid SimpleType or ComplexType" %
                             type_)
-        self._type = type_
+
         self._inner = []
+        self._type = type_
+
+        if max_len != UNBOUNDED:
+            max_len = int(max_len)
+            if max_len < 0:
+                raise ValueError("max_len must be >= 0")
+        self._max_len = max_len
 
     def __repr__(self):
         return self._inner.__repr__()
@@ -44,8 +53,12 @@ class _InnerList(MutableSequence):
         return len(self._inner)
 
     def insert(self, idx, value):
+        if self._max_len != UNBOUNDED and len(self) == self._max_len:
+            raise IndexError("Maximum capacity reached")
         value = self._type.check_value(value)
         self._inner.insert(idx, value)
+
+    # TODO: support __add__ for concatenation
 
 
 class Element(UnicodeMixin, _Component):

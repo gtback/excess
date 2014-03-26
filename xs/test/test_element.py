@@ -71,3 +71,31 @@ def test_add_complex_type_to_inner_list():
     d2.value = "baz"
     dictionary.extend([d1, d2])
     assert 2 == len(dictionary)
+
+def test_inner_list_max_len():
+    int_list = xs.element._InnerList(xs.Integer, max_len=xs.UNBOUNDED)
+    int_list = xs.element._InnerList(xs.Integer, max_len=0)
+    int_list = xs.element._InnerList(xs.Integer, max_len="3")
+
+    with pytest.raises(ValueError):
+        int_list = xs.element._InnerList(xs.Integer, max_len="a")
+    with pytest.raises(ValueError):
+        int_list = xs.element._InnerList(xs.Integer, max_len=-1)
+
+    int_list = xs.element._InnerList(xs.Integer, max_len=3)
+    int_list.append(1)
+    int_list.append(2)
+    int_list.append(3)
+    assert 3 == len(int_list)
+
+    with pytest.raises(IndexError):
+        int_list.insert(0, 4)
+
+    with pytest.raises(IndexError):
+        int_list.append(4)
+    with pytest.raises(IndexError):
+        int_list.extend([4])
+
+    int_list[0] = 4
+
+    assert 3 == len(int_list)
