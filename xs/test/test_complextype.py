@@ -1,3 +1,5 @@
+import pytest
+
 import xs
 
 
@@ -37,6 +39,16 @@ def test_complex_type_attributes():
     assert type(obj._fields) == dict
     obj.foo = "bar"
     assert obj.to_xml() == b'<AttributeOnlyType foo="bar" />'
+
+
+def test_cannot_set_unnnamed_attr():
+    p = PersonInfo()
+    p.firstname = "Franklin"
+    p.lastname = "Roosevelt"
+
+    # "middlename" is not an element defined on our PersonInfo model.
+    with pytest.raises(AttributeError):
+        p.middlename = "Delano"
 
 
 def test_complex_type_elements():
