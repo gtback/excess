@@ -71,12 +71,14 @@ class Element(UnicodeMixin, _Component):
     `TopLevelElement` class.
     """
 
-    def __init__(self, name, type_, default=None):
+    def __init__(self, name, type_, default=None, min_occurs=1, max_occurs=1):
         """Create a new Element.
 
         If `value` is not `None`, it must be of type `type_`.
         """
         super(Element, self).__init__(name, type_, default=default)
+        self._min_occurs = min_occurs
+        self._max_occurs = max_occurs
         #TODO: add other xs:element-specific properties
 
     def __call__(self, value=None):
@@ -89,14 +91,26 @@ class Element(UnicodeMixin, _Component):
     def __unicode__(self):
         return "{0.name} ({0.type_.__name__})".format(self)
 
+    # Allow us to override the property getter without also overriding the
+    # setter.
+    def _get_default(self):
+        if self.multiple:
+            return _InnerList(self.type_, self._max_occurs)
+        else:
+            return super(Element, self)._get_default()
+
     @property
     def multiple(self):
-        #TODO: support maxOccurs>1
-        return False
+        return self._max_occurs == UNBOUNDED or self._max_occurs > 1
+
+
+RESERVED_KEYS = ('name', 'type_', 'default', '_default', 'value', '_value',
+                 '_min_occurs', '_max_occurs')
 
 
 class TopLevelElement(Element):
     """An Element which is not part of a ComplexType"""
+
 
     def __init__(self, *args, **kwargs):
         """Create a top-level schema element.
@@ -138,8 +152,8 @@ class TopLevelElement(Element):
     def __setattr__(self, name, value):
         """ Allow setting the attributes of the contained complexType.
         """
-        if name in ('name', 'type_', 'default', '_default', 'value', '_value'):
-            object.__setattr__(self, name, value)
+        if name in RESERVED_KEYS:
+            super(TopLevelElement, self).__setattr__(name, value)
         else:
             # Create a contained object of the Element's type.
             if self.value is None:

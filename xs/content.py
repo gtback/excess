@@ -31,9 +31,14 @@ class Sequence(object):
 
         for component in self.components:
             name = component.name
+            type_ = component.type_
             value = getattr(obj, name)
 
             if value is None:
                 continue
 
-            parent.append(component.type_.to_etree(name, value))
+            if component.multiple:
+                for each in value:
+                    parent.append(type_.to_etree(name, each))
+            else:
+                parent.append(type_.to_etree(name, value))

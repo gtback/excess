@@ -39,21 +39,19 @@ class _Component(object):
 
     @property
     def default(self):
-        """Return the default value of this element.
+        """Return the default value of this element."""
+        return self._get_default()
 
-        If minOccurs is 0, this will be either None or [], depending on whether
-        maxOccurs is >1 or not.
-        """
+    def _get_default(self):
         if self._default is not None:
             return self._default
-        elif self.multiple:
-            return []
         else:
             return None
 
     @default.setter
     def default(self, value):
         self._default = value
+
 
     @property
     def multiple(self):

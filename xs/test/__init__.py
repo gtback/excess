@@ -1,5 +1,7 @@
 """Common testing utilities"""
 
+import re
+
 import pytest
 
 import xs
@@ -24,3 +26,6 @@ def assert_converts(type_, value, new_value):
     element = xs.TopLevelElement("element", type_)
     element.value = value
     assert element.value == new_value
+
+def uglify(string):
+    return re.sub(b">\s+<", b"><", string).strip()

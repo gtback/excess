@@ -1,6 +1,7 @@
 import pytest
 
 import xs
+from xs.test import uglify
 
 
 class AttributeOnlyType(xs.ComplexType):
@@ -19,6 +20,14 @@ class PersonInfo(xs.ComplexType):
     content = xs.Sequence(
         xs.Element("firstname", xs.String),
         xs.Element("lastname", xs.String)
+    )
+
+
+class Student(xs.ComplexType):
+    content = xs.Sequence(
+        xs.Element("name", xs.String),
+        xs.Element("course", xs.String, max_occurs=2),
+        xs.Element("grade", xs.Integer, max_occurs=xs.UNBOUNDED),
     )
 
 
@@ -49,6 +58,51 @@ def test_cannot_set_unnnamed_attr():
     # "middlename" is not an element defined on our PersonInfo model.
     with pytest.raises(AttributeError):
         p.middlename = "Delano"
+
+
+EXPECTED_STUDENT_XML = uglify(b"""
+    <Student>
+        <name>Joe Cool</name>
+        <grade>75</grade>
+        <grade>89</grade>
+        <grade>66</grade>
+    </Student>""")
+
+
+def test_max_occurs_unbounded():
+    s = Student()
+    s.name = "Joe Cool"
+    s.grade.append(75)
+    s.grade.append(89)
+    s.grade.append(66)
+
+    assert EXPECTED_STUDENT_XML == s.to_xml()
+
+
+def test_max_occurs_bounded():
+    s = Student()
+    s.name = "Joe Cool"
+    s.course.append("History")
+    s.course.append("Algebra")
+    with pytest.raises(IndexError):
+        s.course.append("English")
+
+
+def test_set_list():
+    s = Student()
+    s.name = "Joe Cool"
+    s.grade = [75, 89, 66]
+
+    assert EXPECTED_STUDENT_XML == s.to_xml()
+
+
+def test_set_single():
+    s = Student()
+    s.name = "Joe Cool"
+    s.grade = 95
+
+    expected = b"<Student><name>Joe Cool</name><grade>95</grade></Student>"
+    assert expected == s.to_xml()
 
 
 def test_complex_type_elements():

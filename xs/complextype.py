@@ -32,10 +32,16 @@ class ComplexType(_DataType):
         if name in self._fields:
             return self._fields[name]
         elif name in components:
+            component = components[name]
             # Automatically return the default value for any component which
             # has not been explicitly set. This saves storage and time to
             # instantiate a new instance of a ComplexType.
-            return components[name].default
+            default = component.default
+            # For embedded _InnerLists, we want each instance of this class
+            # to have it's own copy of the list, so set it here.
+            if component.multiple:
+                self._fields[name] = default
+            return default
         else:
             msg = "%s is not a valid component of a %s" % (name, cls.__name__)
             raise AttributeError(msg)
@@ -52,7 +58,17 @@ class ComplexType(_DataType):
             object.__setattr__(self, name, value)
         elif name in components:
             component = components[name]
-            self._fields[name] = component.type_.check_value(value)
+            if component.multiple:
+                # If setting, we are overwriting any existing value
+                new_value = component.default
+                # TODO: support other iterables
+                if isinstance(value, list):
+                    new_value.extend(value)
+                else:
+                    new_value.append(value)
+                self._fields[name] = new_value
+            else:
+                self._fields[name] = component.type_.check_value(value)
         else:
             msg = "%s is not a valid component of a %s" % (name, cls.__name__)
             raise AttributeError(msg)
