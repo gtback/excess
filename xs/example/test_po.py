@@ -1,9 +1,10 @@
 from __future__ import absolute_import
 
 from datetime import date
-import re
 
-from .po import PurchaseOrder, USAddress
+from xs.test import uglify
+
+from .po import Item, Items, PurchaseOrder, USAddress
 
 # The full example, the target for implementation
 COMPLETE = b"""
@@ -23,7 +24,7 @@ COMPLETE = b"""
       <state>PA</state>
       <zip>95819</zip>
    </billTo>
-   <comment>Hurry, my lawn is going wild<!/comment>
+   <comment>Hurry, my lawn is going wild!</comment>
    <items>
       <item partNum="872-AA">
          <productName>Lawnmower</productName>
@@ -58,10 +59,23 @@ SUPPORTED = b"""
       <state>PA</state>
       <zip>95819</zip>
    </billTo>
+   <comment>Hurry, my lawn is going wild!</comment>
+   <items>
+      <item partNum="872-AA">
+         <productName>Lawnmower</productName>
+         <quantity>1</quantity>
+         <USPrice>148.95</USPrice>
+         <comment>Confirm this is electric</comment>
+      </item>
+      <item partNum="926-AA">
+         <productName>Baby Monitor</productName>
+         <quantity>1</quantity>
+         <USPrice>39.98</USPrice>
+         <shipDate>1999-05-21</shipDate>
+      </item>
+   </items>
 </purchaseOrder>
 """
-
-UGLIFIED = re.sub(b">\s+<", b"><", SUPPORTED).strip()
 
 
 def test_building_purchase_order():
@@ -82,8 +96,29 @@ def test_building_purchase_order():
     billTo.state = "PA"
     billTo.zip = "95819"
 
+    i1 = Item()
+    i1.partNum = "872-AA"
+    i1.productName = "Lawnmower"
+    i1.quantity = 1
+    # TODO: Fix Decimal to support floats
+    i1.USPrice = "148.95"
+    i1.comment = "Confirm this is electric"
+
+    i2 = Item()
+    i2.partNum = "926-AA"
+    i2.productName = "Baby Monitor"
+    i2.quantity = 1
+    i2.USPrice = "39.98"
+    i2.shipDate = date(1999, 5, 21)
+
     p.shipTo = shipTo
     p.billTo = billTo
-    print(UGLIFIED)
+    p.comment = "Hurry, my lawn is going wild!"
+    p.items = Items()
+    p.items.item.append(i1)
+    p.items.item.append(i2)
+
+    expected = uglify(SUPPORTED)
+    print(expected)
     print(p.to_xml())
-    assert UGLIFIED == p.to_xml()
+    assert expected == p.to_xml()
