@@ -5,9 +5,47 @@ xs.element
 Implementation of xs:element
 """
 
+from collections import MutableSequence
+
 from .compat import etree, UnicodeMixin
-from .core import _Component
+from .core import _Component, _DataType
 from .simpletypes import _SimpleType
+
+
+class _InnerList(MutableSequence):
+    """Used to maintain a "typed" list.
+
+    Ensures that each element added to the list is of the right type, or
+    can be converted to the correct type.
+    """
+    _contained_type = object
+
+    def __init__(self, type_=None):
+        if not issubclass(type_, _DataType):
+            raise TypeError("'%s' is not a valid SimpleType or ComplexType" %
+                            type_)
+        self._type = type_
+        self._inner = []
+
+    def __repr__(self):
+        return self._inner.__repr__()
+
+    def __getitem__(self, key):
+        return self._inner.__getitem__(key)
+
+    def __setitem__(self, key, value):
+        value = self._type.check_value(value)
+        self._inner.__setitem__(key, value)
+
+    def __delitem__(self, key):
+        self._inner.__delitem__(key)
+
+    def __len__(self):
+        return len(self._inner)
+
+    def insert(self, idx, value):
+        value = self._type.check_value(value)
+        self._inner.insert(idx, value)
 
 
 class Element(UnicodeMixin, _Component):
