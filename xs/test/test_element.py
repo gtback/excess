@@ -99,3 +99,26 @@ def test_inner_list_max_len():
     int_list[0] = 4
 
     assert 3 == len(int_list)
+
+def test_inner_list_eq():
+    int_list = xs.element._InnerList(xs.Integer)
+    int_list2 = xs.element._InnerList(xs.Integer)
+    posint_list = xs.element._InnerList(xs.PositiveInteger)
+
+    assert int_list == int_list2
+    assert posint_list != int_list # lists have different types
+    int_list.append(1)
+    assert int_list == [1]
+    assert int_list == [1.0] # int 1 and float 1.0 will be implictly compared.
+    assert int_list != int_list2
+
+    int_list2.append(1.0)
+    assert int_list == int_list2
+
+    posint_list.append(1)
+    assert posint_list != int_list # lists have different types
+
+    # These should never be equal to other "types" of objects
+    assert int_list != object()
+    assert int_list != True
+    assert int_list != int

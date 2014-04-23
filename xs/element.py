@@ -36,6 +36,20 @@ class _InnerList(MutableSequence):
                 raise ValueError("max_len must be >= 0")
         self._max_len = max_len
 
+    def __eq__(self, other):
+        if isinstance(other, _InnerList):
+            #TODO: Do we want to enforce the inner type to be identical?
+            return self._type == other._type and self._inner == other._inner
+        if isinstance(other, list):
+            return self._inner == other
+        return NotImplemented
+
+    def __ne__(self, other):
+        res = (self == other)
+        if res is NotImplemented:
+            return NotImplemented
+        return not res
+
     def __repr__(self):
         return self._inner.__repr__()
 
