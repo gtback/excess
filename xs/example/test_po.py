@@ -1,8 +1,13 @@
+"""
+Tests for the Purchase Order example schema.
+"""
+
 from __future__ import absolute_import
 
 from datetime import date
 
 from xs.test import uglify
+from xs.parsers import EtreeParser
 
 from .po import Item, Items, PurchaseOrder, USAddress
 
@@ -122,3 +127,22 @@ def test_building_purchase_order():
     print(expected)
     print(p.to_xml())
     assert expected == p.to_xml()
+
+
+def test_parse_purchase_order():
+    parser = EtreeParser()
+    parser.register(PurchaseOrder)
+    order = parser.parse_string(SUPPORTED)
+
+    assert order is not None
+    assert order.orderDate == date(1999, 10, 20)
+    assert order.billTo is not None
+    assert order.shipTo is not None
+    assert order.shipTo.name == "Alice Smith"
+    assert len(order.items.item) == 2
+    assert order.items.item[1].shipDate == date(1999, 5, 21)
+
+    expected = uglify(SUPPORTED)
+    print(expected)
+    print(order.to_xml())
+    assert expected == order.to_xml()

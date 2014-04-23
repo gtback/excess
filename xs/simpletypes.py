@@ -1,7 +1,7 @@
 from datetime import date
 from decimal import Decimal
 
-from .compat import etree, str
+from .compat import basestring, etree, str
 from .core import _DataType
 
 
@@ -64,8 +64,11 @@ class Date(_SimpleType):
 
     @classmethod
     def check_value(cls, value):
+        # TODO: roll into _SimpleType.check_value
         if isinstance(value, date):
             return value
+        elif isinstance(value, basestring):
+            return cls.from_xml(value)
         raise ValueError("Invalid value for Date object: %s (type %s)" %
                          (value, type(value)))
 

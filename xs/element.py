@@ -161,7 +161,10 @@ class TopLevelElement(Element):
         If 'name' is not an attribute of the `Element` class itself,
         assume it is a property of the contained ComplexType object.
         """
-        return getattr(self.value, name)
+        if self.value is not None:
+            return getattr(self.value, name)
+        else:
+            return getattr(self.type_, name)
 
     def __setattr__(self, name, value):
         """ Allow setting the attributes of the contained complexType.
