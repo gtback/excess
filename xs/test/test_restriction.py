@@ -10,7 +10,7 @@ class MaxExclusive100(xs.Restriction, xs.PositiveInteger):
 def test_positive_integer_restriction():
     element = xs.TopLevelElement("example", MaxExclusive100)
     element.value = 100
-    assert b"<example>100</example>" == element.to_xml()
+    assert b"<example>100</example>" == xs.serialize(element)
     with pytest.raises(ValueError):
         element.value = 101
 

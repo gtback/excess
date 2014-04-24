@@ -6,8 +6,9 @@ from __future__ import absolute_import
 
 from datetime import date
 
-from xs.test import uglify
+import xs
 from xs.parsers import EtreeParser
+from xs.test import uglify
 
 from .po import Item, Items, PurchaseOrder, USAddress
 
@@ -124,9 +125,10 @@ def test_building_purchase_order():
     p.items.item.append(i2)
 
     expected = uglify(SUPPORTED)
+    actual = xs.serialize(p)
     print(expected)
-    print(p.to_xml())
-    assert expected == p.to_xml()
+    print(actual)
+    assert expected == actual
 
 
 def test_parse_purchase_order():
@@ -143,6 +145,7 @@ def test_parse_purchase_order():
     assert order.items.item[1].shipDate == date(1999, 5, 21)
 
     expected = uglify(SUPPORTED)
+    actual = xs.serialize(order)
     print(expected)
-    print(order.to_xml())
-    assert expected == order.to_xml()
+    print(actual)
+    assert expected == actual

@@ -130,7 +130,7 @@ class TopLevelElement(Element):
         """Create a top-level schema element.
 
         You do not need to specify a value on creation, but it needs to be
-        specified before calling to_etree.
+        specified before being serialized.
         """
         value = kwargs.pop('value', None)
         super(TopLevelElement, self).__init__(*args, **kwargs)
@@ -176,12 +176,3 @@ class TopLevelElement(Element):
             if self.value is None:
                 self.value = self.type_()
             object.__setattr__(self.value, name, value)
-
-    def to_etree(self):
-        if self.value is None:
-            raise ValueError("Element has not been given a value")
-
-        return self.type_.to_etree(self.name, self.value)
-
-    def to_xml(self):
-        return etree.tostring(self.to_etree())

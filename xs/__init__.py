@@ -12,6 +12,12 @@ from .complextype import ComplexType
 from .content import Sequence
 from .element import Element, TopLevelElement, UNBOUNDED
 from .restriction import Restriction
+from .serializers import XMLSerializer
 
 
 __version__ = "0.1"
+
+def serialize(obj):
+    """Serialize an xs object using the default options"""
+    serializer = XMLSerializer()
+    return serializer.serialize(obj)

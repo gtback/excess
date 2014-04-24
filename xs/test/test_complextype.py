@@ -47,7 +47,7 @@ def test_complex_type_attributes():
     obj = AttributeOnlyType()
     assert type(obj._fields) == dict
     obj.foo = "bar"
-    assert obj.to_xml() == b'<AttributeOnlyType foo="bar" />'
+    assert xs.serialize(obj) == b'<AttributeOnlyType foo="bar" />'
 
 
 def test_cannot_set_unnnamed_attr():
@@ -76,7 +76,7 @@ def test_max_occurs_unbounded():
     s.grade.append(89)
     s.grade.append(66)
 
-    assert EXPECTED_STUDENT_XML == s.to_xml()
+    assert EXPECTED_STUDENT_XML == xs.serialize(s)
 
 
 def test_max_occurs_bounded():
@@ -93,7 +93,7 @@ def test_set_list():
     s.name = "Joe Cool"
     s.grade = [75, 89, 66]
 
-    assert EXPECTED_STUDENT_XML == s.to_xml()
+    assert EXPECTED_STUDENT_XML == xs.serialize(s)
 
 
 def test_set_single():
@@ -102,14 +102,14 @@ def test_set_single():
     s.grade = 95
 
     expected = b"<Student><name>Joe Cool</name><grade>95</grade></Student>"
-    assert expected == s.to_xml()
+    assert expected == xs.serialize(s)
 
 
 def test_complex_type_elements():
     obj = SequenceType()
 
     obj.foo = "bar"
-    assert obj.to_xml() == b'<SequenceType><foo>bar</foo></SequenceType>'
+    assert xs.serialize(obj) == b'<SequenceType><foo>bar</foo></SequenceType>'
 
 
 def test_top_level_element_with_complex_type():
@@ -129,5 +129,4 @@ def test_top_level_element_with_complex_type():
     </employee>
     """
 
-    assert p.to_xml() == b"".join(xmlstr.split())
-
+    assert xs.serialize(p) == b"".join(xmlstr.split())

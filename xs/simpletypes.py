@@ -17,12 +17,6 @@ class _SimpleType(_DataType):
         return str(value)
 
     @classmethod
-    def to_etree(cls, name, value):
-        root = etree.Element(name)
-        root.text = cls.to_xml(value)
-        return root
-
-    @classmethod
     def check_value(cls, value):
         return cls._pytype(value)
 

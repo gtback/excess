@@ -25,20 +25,3 @@ class Sequence(object):
                 raise TypeError("Each item in a sequence must be an Element")
             self.components.append(arg)
             self.component_dict[arg.name] = arg
-
-    def append_to_etree(self, parent, obj):
-        """Populate components from this sequence into the ETree node"""
-
-        for component in self.components:
-            name = component.name
-            type_ = component.type_
-            value = getattr(obj, name)
-
-            if value is None:
-                continue
-
-            if component.multiple:
-                for each in value:
-                    parent.append(type_.to_etree(name, each))
-            else:
-                parent.append(type_.to_etree(name, value))

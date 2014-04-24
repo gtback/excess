@@ -92,29 +92,3 @@ class ComplexType(_DataType):
             # Memoize
             cls.__components = components
         return cls.__components
-
-    @classmethod
-    def to_etree(cls, name, value):
-        if not isinstance(value, cls):
-            msg = "{0} should be a {1} instance.".format(value, cls.__name__)
-            raise ValueError(msg)
-
-        root = etree.Element(name)
-
-        for attribute in value.attributes:
-            attribute_value = getattr(value, attribute.name)
-            if attribute_value:
-                # Attibutes must have simple types
-                root.set(attribute.name,
-                         attribute.type_.to_xml(attribute_value))
-
-        if cls.content:
-            cls.content.append_to_etree(root, value)
-
-        return root
-
-    def to_xml(self):
-        cls = self.__class__
-        name = cls.__name__
-        value = self
-        return etree.tostring(cls.to_etree(name, value))
