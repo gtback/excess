@@ -63,14 +63,16 @@ class EtreeSerializer(object):
                     type_ = component.type_
                     val = getattr(value, name)
 
-                    if val is None:
-                        continue
-
                     if component.multiple:
+                        # TODO: enforce min_occurs when multiple=True
                         for each in val:
                             node.append(self._serialize(each, type_, name))
                     else:
-                        node.append(self._serialize(val, type_, name))
+                        if component._min_occurs > 0 and val is None:
+                            msg = "Required element %s is missing" % name
+                            raise ValueError(msg)
+                        if val is not None:
+                            node.append(self._serialize(val, type_, name))
         else:
             raise Exception
 

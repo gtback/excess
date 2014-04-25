@@ -69,6 +69,13 @@ EXPECTED_STUDENT_XML = uglify(b"""
     </Student>""")
 
 
+def test_min_occurs():
+    student = Student()
+    student.grade = [95]
+
+    with pytest.raises(ValueError):
+        xs.serialize(student)
+
 def test_max_occurs_unbounded():
     s = Student()
     s.name = "Joe Cool"
