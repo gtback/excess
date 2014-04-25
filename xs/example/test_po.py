@@ -12,7 +12,7 @@ from xs.test import uglify
 
 from .po import Item, Items, PurchaseOrder, USAddress
 
-# The full example, the target for implementation
+
 COMPLETE = b"""
 <?xml version="1.0"?>
 <purchaseOrder orderDate="1999-10-20">
@@ -24,41 +24,6 @@ COMPLETE = b"""
       <zip>90952</zip>
    </shipTo>
    <billTo country="US">
-      <name>Robert Smith</name>
-      <street>8 Oak Avenue</street>
-      <city>Old Town</city>
-      <state>PA</state>
-      <zip>95819</zip>
-   </billTo>
-   <comment>Hurry, my lawn is going wild!</comment>
-   <items>
-      <item partNum="872-AA">
-         <productName>Lawnmower</productName>
-         <quantity>1</quantity>
-         <USPrice>148.95</USPrice>
-         <comment>Confirm this is electric</comment>
-      </item>
-      <item partNum="926-AA">
-         <productName>Baby Monitor</productName>
-         <quantity>1</quantity>
-         <USPrice>39.98</USPrice>
-         <shipDate>1999-05-21</shipDate>
-      </item>
-   </items>
-</purchaseOrder>
-"""
-
-# The output as currently supported.
-SUPPORTED = b"""
-<purchaseOrder orderDate="1999-10-20">
-   <shipTo>
-      <name>Alice Smith</name>
-      <street>123 Maple Street</street>
-      <city>Mill Valley</city>
-      <state>CA</state>
-      <zip>90952</zip>
-   </shipTo>
-   <billTo>
       <name>Robert Smith</name>
       <street>8 Oak Avenue</street>
       <city>Old Town</city>
@@ -124,8 +89,8 @@ def test_building_purchase_order():
     p.items.item.append(i1)
     p.items.item.append(i2)
 
-    expected = uglify(SUPPORTED)
-    actual = xs.serialize(p)
+    expected = uglify(COMPLETE)
+    actual = xs.serialize(p, include_header=True, include_fixed_attributes=True)
     print(expected)
     print(actual)
     assert expected == actual
@@ -134,18 +99,20 @@ def test_building_purchase_order():
 def test_parse_purchase_order():
     parser = EtreeParser()
     parser.register(PurchaseOrder)
-    order = parser.parse_string(SUPPORTED)
+    order = parser.parse_string(COMPLETE)
 
     assert order is not None
     assert order.orderDate == date(1999, 10, 20)
     assert order.billTo is not None
+    assert order.billTo.country == "US"
     assert order.shipTo is not None
     assert order.shipTo.name == "Alice Smith"
     assert len(order.items.item) == 2
     assert order.items.item[1].shipDate == date(1999, 5, 21)
 
-    expected = uglify(SUPPORTED)
-    actual = xs.serialize(order)
+    expected = uglify(COMPLETE)
+    actual = xs.serialize(order, include_header=True,
+                                 include_fixed_attributes=True)
     print(expected)
     print(actual)
     assert expected == actual

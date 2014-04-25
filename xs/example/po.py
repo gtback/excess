@@ -16,8 +16,7 @@ class USAddress(xs.ComplexType):
         xs.Element("zip", xs.Decimal),
     )
     attributes = [
-        #TODO: add 'fixed="US")
-        xs.Attribute("country", xs.NMTOKEN)
+        xs.Attribute("country", xs.NMTOKEN, fixed="US")
     ]
 
 
@@ -39,11 +38,10 @@ class Item(xs.ComplexType):
         xs.Element("quantity", _quantity),
         xs.Element("USPrice", xs.Decimal),
         xs.Element(ref=comment, min_occurs=0),
-        #TODO: enforce min_occurs
         xs.Element("shipDate", xs.Date, min_occurs=0)
     )
     attributes = [
-        #TODO: add 'fixed="US")
+        #TODO: Add use="required"
         xs.Attribute("partNum", SKU)
     ]
 
@@ -58,7 +56,7 @@ class PurchaseOrderType(xs.ComplexType):
     content = xs.Sequence(
         xs.Element("shipTo", USAddress),
         xs.Element("billTo", USAddress),
-        comment,
+        xs.Element(ref=comment, min_occurs=0),
         xs.Element("items", Items),
     )
 

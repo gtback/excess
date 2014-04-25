@@ -13,6 +13,9 @@ from ..simpletypes import _SimpleType
 
 class EtreeSerializer(object):
 
+    def __init__(self, **options):
+        self.options = options
+
     def serialize(self, obj):
         """Serialize an object to an etree.
 
@@ -50,7 +53,12 @@ class EtreeSerializer(object):
                        "%s (%s)" % (value, type(value), name, type_))
                 raise ValueError(msg)
             for attribute in type_.attributes:
+                include_fixed = self.options.get("include_fixed_attributes")
+                if attribute.fixed and not include_fixed:
+                    continue
+
                 attribute_value = getattr(value, attribute.name)
+
                 if attribute_value:
                     # Attibutes must have simple types
                     node.set(attribute.name,

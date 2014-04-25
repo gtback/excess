@@ -17,7 +17,7 @@ from .serializers import XMLSerializer
 
 __version__ = "0.1"
 
-def serialize(obj):
+def serialize(obj, **options):
     """Serialize an xs object using the default options"""
-    serializer = XMLSerializer()
+    serializer = XMLSerializer(**options)
     return serializer.serialize(obj)
