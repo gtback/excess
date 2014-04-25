@@ -38,8 +38,7 @@ class Item(xs.ComplexType):
         xs.Element("productName", xs.String),
         xs.Element("quantity", _quantity),
         xs.Element("USPrice", xs.Decimal),
-        #TODO: add ElementRef, minOccurs
-        comment,
+        xs.Element(ref=comment, min_occurs=0),
         #TODO: enforce min_occurs
         xs.Element("shipDate", xs.Date, min_occurs=0)
     )

@@ -33,6 +33,10 @@ class _Component(object):
     """
 
     def __init__(self, name, type_, default=None):
+        if not name:
+            raise ValueError("Name must be provided")
+        if not type_:
+            raise ValueError("Type must be provided")
         self.name = name
         self.type_ = type_
         self.default = default

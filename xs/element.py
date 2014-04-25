@@ -85,12 +85,37 @@ class Element(UnicodeMixin, _Component):
     `TopLevelElement` class.
     """
 
-    def __init__(self, name, type_, default=None, min_occurs=1, max_occurs=1):
+    def __init__(self, name=None, type_=None, ref=None, default=None, min_occurs=None, max_occurs=None):
         """Create a new Element.
 
-        If `value` is not `None`, it must be of type `type_`.
+        `name` and `type_` are required if `ref` is not provided.
+
+        If `ref` is provided, it's properties are used as a starting point for
+        the new Element. However, it will not track future changes to the base
+        Element.
+
+        If `default` is not `None`, it must be of type `type_`.
         """
+        # If this is based off an existing Element:
+        if ref:
+            if not isinstance(ref, Element):
+                raise ValueError("ref must refer to an existing element")
+            name = name or ref.name
+            type_ = type_ or ref.type_
+            default = default or ref.default
+
         super(Element, self).__init__(name, type_, default=default)
+
+        if min_occurs is None:
+            if ref and ref._min_occurs:
+                min_occurs = ref._min_occurs
+            else:
+                min_occurs = 1
+        if max_occurs is None:
+            if ref and ref._max_occurs:
+                max_occurs = ref._max_occurs
+            else:
+                max_occurs = 1
         self._min_occurs = min_occurs
         self._max_occurs = max_occurs
         #TODO: add other xs:element-specific properties

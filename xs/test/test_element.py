@@ -122,3 +122,26 @@ def test_inner_list_eq():
     assert int_list != object()
     assert int_list != True
     assert int_list != int
+
+def test_invalid_element_ref():
+    with pytest.raises(ValueError):
+        xs.Element()
+
+    with pytest.raises(ValueError):
+        xs.Element("A string")
+
+    with pytest.raises(ValueError):
+        xs.Element(type_=xs.Integer)
+
+def test_element_ref():
+    element = xs.Element("lastname", xs.String, default="foo")
+    elementref = xs.Element(ref=element, default="foo2", min_occurs=0)
+    assert element.default == "foo"
+    assert elementref.default == "foo2"
+    assert element._min_occurs == 1
+    assert elementref._min_occurs == 0
+
+    element.name = "newname"
+    assert elementref.name == "lastname"
+    element.type_ = xs.Decimal
+    assert elementref.type_ == xs.String
