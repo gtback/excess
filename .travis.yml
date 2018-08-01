@@ -11,7 +11,3 @@ install:
 
 script:
    - python setup.py test
-
-notifications:
-    email:
-        - gback@mitre.org
